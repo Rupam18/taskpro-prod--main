@@ -180,11 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
           ${task.deadline ? new Date(task.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'No date'}
         </div>
-        <div class="kanban-avatars">
-           <div class="kanban-avatar" style="background: ${tagColor}" title="${task.assignedTo?.name || 'Unassigned'}">
-             ${(task.assignedTo?.name || 'U').charAt(0)}
-           </div>
-        </div>
+         <div class="kanban-avatars">
+            <div class="kanban-avatar" style="background: ${tagColor}" title="${task.assignedTo?.name || 'Unassigned'}">
+              ${(task.assignedTo?.name || 'U').charAt(0).toUpperCase()}
+            </div>
+         </div>
       </div>
     `;
 
@@ -232,33 +232,50 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderTeamMembers() {
     const container = document.querySelector('.team-list');
     if (!container) return;
-    container.innerHTML = teamMembers.map(member => `
-      <div class="team-member">
-        <div class="team-avatar-wrap">
-          <div class="team-avatar" style="background: var(--gradient-main)">${member.name.charAt(0)}</div>
-          <span class="team-status online"></span>
+    if (!teamMembers || teamMembers.length === 0) {
+      container.innerHTML = '<div class="no-data">No team members found</div>';
+      return;
+    }
+    container.innerHTML = teamMembers.map(member => {
+      const name = member.name || 'Unknown User';
+      const role = member.role || 'Member';
+      const initial = name.charAt(0).toUpperCase();
+      return `
+        <div class="team-member">
+          <div class="team-avatar-wrap">
+            <div class="team-avatar" style="background: var(--gradient-main)">${initial}</div>
+            <span class="team-status online"></span>
+          </div>
+          <div class="team-info">
+            <div class="team-name">${name}</div>
+            <div class="team-role">${role}</div>
+          </div>
+          <span class="team-tasks">${member.assignedCount || 0} tasks</span>
         </div>
-        <div class="team-info">
-          <div class="team-name">${member.name}</div>
-          <div class="team-role">${member.role}</div>
-        </div>
-        <span class="team-tasks">${member.assignedCount} tasks</span>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   function renderActivities() {
     const container = document.querySelector('.activity-list');
     if (!container) return;
-    container.innerHTML = activities.map(act => `
-      <div class="activity-item">
-        <div class="activity-avatar" style="background: var(--gradient-main)">${act.user.name.charAt(0)}</div>
-        <div class="activity-body">
-          <p><strong>${act.user.name}</strong> ${act.description}</p>
-          <span class="activity-time">${timeAgo(new Date(act.createdAt))}</span>
+    if (!activities || activities.length === 0) {
+      container.innerHTML = '<div class="no-data">No recent activity</div>';
+      return;
+    }
+    container.innerHTML = activities.map(act => {
+      const userName = act.user?.name || 'Unknown User';
+      const initial = userName.charAt(0).toUpperCase();
+      return `
+        <div class="activity-item">
+          <div class="activity-avatar" style="background: var(--gradient-main)">${initial}</div>
+          <div class="activity-body">
+            <p><strong>${userName}</strong> ${act.description}</p>
+            <span class="activity-time">${timeAgo(new Date(act.createdAt))}</span>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   function updateDashboardHeader() {
@@ -274,7 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetDashboardHeader() {
     const titleEl = document.getElementById('dashboardTitle');
-    if (titleEl) titleEl.innerHTML = `Welcome back, <span id="welcomeName">${user.name.split(' ')[0]}</span>`;
+    if (titleEl) {
+      const firstName = user.name ? user.name.split(' ')[0] : 'User';
+      titleEl.innerHTML = `Welcome back, <span id="welcomeName">${firstName}</span>`;
+    }
     const descEl = document.getElementById('dashboardSubtitle');
     if (descEl) descEl.textContent = "Here's what's happening with your projects today.";
     document.getElementById('clearProjectFilter')?.classList.add('hidden');
@@ -487,9 +507,19 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       e.target.closest('.nav-item').classList.add('active');
-      allTasks = allTasks.filter(t => t.userId === user.id); 
+      const userId = user._id || user.id;
+      allTasks = allTasks.filter(t => t.userId === userId); 
       renderTasks();
       showToast('Showing your tasks');
+    });
+
+    document.getElementById('clearProjectFilter')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      selectedProjectId = null;
+      localStorage.removeItem('selectedProjectId');
+      resetDashboardHeader();
+      fetchTasks();
+      renderSidebarProjects();
     });
 
     // Logout
