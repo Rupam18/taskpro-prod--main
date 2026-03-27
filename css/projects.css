@@ -563,6 +563,44 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Projects Header Refinement */
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.welcome-text h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+}
+
+.welcome-text p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+#newProjectBtn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
 .hidden { display: none !important; }
 
 /* User Profile Refinements */
