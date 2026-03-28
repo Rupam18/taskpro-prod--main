@@ -862,17 +862,17 @@ button {
 .kanban-priority.medium { color: var(--neon-amber); }
 .kanban-priority.low { color: var(--neon-green); }
 
-.kanban-ai-badge {
+.kanban-status-badge {
   font-size: 0.68rem;
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 6px;
   background: rgba(124, 58, 237, 0.15);
   color: var(--neon-purple);
-  animation: aiPulse 2s ease-in-out infinite;
+  animation: statusPulse 2s ease-in-out infinite;
 }
 
-@keyframes aiPulse {
+@keyframes statusPulse {
   0%, 100% { box-shadow: none; }
   50% { box-shadow: 0 0 12px rgba(124, 58, 237, 0.3); }
 }

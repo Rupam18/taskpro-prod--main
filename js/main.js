@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 2. Typewriter Effect
-  const words = ['AI Workflows.', 'Seamless Boards.', 'Smart Documents.'];
+  const words = ['Unified Workflows.', 'Seamless Boards.', 'Smart Documents.'];
   const typeTarget = document.getElementById('typewriter');
   let wordIndex = 0;
   let charIndex = 0;
